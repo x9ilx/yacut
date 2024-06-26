@@ -8,6 +8,19 @@ from .validators import validate_url_map_data
 
 @app.route('/api/id/', methods=['POST'])
 def create_url_map():
+    """
+    API для создания новой записи соответствия ссылки и короткого ID.
+
+    Returns
+    -------
+    Response
+        Ответ на запрос в формате json
+
+    Raises
+    ------
+    APIError
+        В случае, если запрос неверен
+    """
     data = request.get_json(silent=True)
 
     if validate_url_map_data(data):
@@ -27,6 +40,24 @@ def create_url_map():
 
 @app.route('/api/id/<string:short>/', methods=['GET'])
 def get_full_url(short):
+    """
+    API для получение исходной ссылки по короткому ID.
+
+    Parameters
+    ----------
+    short : str
+        Короткий ID
+
+    Returns
+    -------
+    Response
+        Ответ на запрос в формате json
+
+    Raises
+    ------
+    APIError
+        В случае, если запрос неверен
+    """
     url_map = URLMap.query.filter_by(short=short).first()
 
     if url_map is None:

@@ -7,6 +7,13 @@ from .models import URLMap
 
 @app.route('/', methods=['GET', 'POST'])
 def generate_link():
+    """
+    Эндпоинт главной страницы с формой, для создания новой записи в БД.
+    Returns
+    -------
+    str
+        HTML-код шаблона "generate_link.html"
+    """
     form = URLMapForm()
     context = {
         'form': form,
@@ -38,5 +45,19 @@ def generate_link():
 
 @app.route('/<string:short>')
 def redirect_view(short):
+    """
+    Эндпоинт для перенапралвения пользователя по исходной ссылки,
+    при сопоставлении с коротким ID.
+
+    Parameters
+    ----------
+    short : str
+        Короткий ID
+
+    Returns
+    -------
+    Response
+        Ответ на запрос с перенаправлением
+    """
     url_map = URLMap.query.filter_by(short=short).first_or_404()
     return redirect(url_map.original)
