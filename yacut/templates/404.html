@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<!-- set the encoding of your site -->
+	<meta charset="utf-8">
+	<!-- set the viewport width and initial-scale on mobile devices -->
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Что-то пошло не так</title>
+	<!-- include the site animate stylesheet -->
+	<link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/error_pages.css') }}" media="screen"/>     
+	<link href='https://fonts.googleapis.com/css?family=Bangers' rel='stylesheet' type='text/css'>
+	<link href='https://fonts.googleapis.com/css?family=Poppins:400,300' rel='stylesheet' type='text/css'>  
+</head>
+<body>
+	<!-- Page Loader -->
+	<div id="pre-loader" class="loader-container">
+		<div class="loader">
+			<div></div>
+			<div></div>
+		</div>
+	</div>
+	<!-- main container of all the page elements -->
+	<div id="wrapper">
+		<!-- mt bluesky -->
+		<div id="mt-bluesky"></div>
+		<!-- Page Loader -->
+		<div id="mt-sun"></div>
+		<!-- mt sun -->
+		<div id="mt-sun2"></div>
+		<!-- mt cloud -->
+		<div id="mt-cloud"></div>
+		<!-- mt base -->
+		<div id="mt-base"></div>
+		<!-- base overlay -->
+		<div id="base-overlay"></div>
+		<!-- night -->
+		<div id="night"></div>
+		<!-- stars -->
+		<div id="stars"></div>
+		<!-- sstar -->
+		<div id="sstar"></div>
+		<!-- moon -->
+		<div id="moon"></div>
+		<!-- hock -->
+		<div id="hock"></div>
+		<!-- title -->
+		<span id="title"><span>404</span></span>
+		<!-- oh -->
+		<span id="oh">Печалька</span>
+		<!-- txt -->
+		<div class="txt">
+			<p>Искомая страница не найдена :(</p>
+			<a href="{{ url_for('generate_link') }}" class="btn">Вернуться на главную</a>
+		</div>
+	</div>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-1.11.3.min.js') }}"></script>
+	<script type="text/javascript" src="{{ url_for('static', filename='js/jquery.color.js') }}"></script>
+	<script type="text/javascript">
+		$(function() {
+			$('#mt-sun').animate({'top':'96%','opacity':0.4}, 2000,function(){
+				$('#stars').animate({'opacity':1}, 2000,function(){
+					$('#moon').animate({'top':'10%','opacity':1}, 1000, function(){
+						$('#hock').animate({'bottom':'190px','opacity':1}, 1000, function(){
+							$('#hock').animate({'bottom':'49%'}, 1000);
+							$('#title').animate({'top':'44%','opacity':1}, 1000);
+							$('#sstar').animate({'opacity':0.8}, 100);
+							$('#sstar').animate({'backgroundPosition':'0px 0px','top':'15%', 'opacity':0
+							}, 300,function(){
+								$('#ground-overlay').animate({'opacity':1}, 700);
+								$('#title').animate({'top':'53%','opacity':1}, 1000, function(){
+									$('#oh').animate({'opacity':1}, 500);
+									$('.txt').animate({'opacity':1}, 500);
+								});
+							});
+						});
+					});
+				});
+			});
+			$('#mt-sun').animate({'top':'96%','opacity':0.8}, 6000);
+			$('#mt-bluesky').animate({'backgroundColor':'#4F0030'}, 9000);
+			$('#mt-cloud').animate({'backgroundPosition':'1000px 0px','opacity':0}, 15000);
+			$('#night').animate({'opacity':0.8}, 10000);
+			$('html').animate({'backgroundColor':'#1c2401'}, 10000);
+		});
+	</script>
+</body>
+</html>

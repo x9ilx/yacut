@@ -50,10 +50,12 @@ def default_app():
 
 @pytest.fixture
 def _app():
-    app.config.update({
-        'TESTING': True,
-        'WTF_CSRF_ENABLED': False,
-    })
+    app.config.update(
+        {
+            'TESTING': True,
+            'WTF_CSRF_ENABLED': False,
+        }
+    )
     with app.app_context():
         db.create_all()
         yield app

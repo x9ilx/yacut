@@ -1,5 +1,6 @@
-import pytest
 from http import HTTPStatus
+
+import pytest
 
 from yacut.models import URLMap
 
@@ -12,10 +13,13 @@ VALIDATION_ERROR_KEY = 'message'
 
 def test_create_id(client):
     request_short_link = 'py'
-    response = client.post(CREATE_SHORT_LINK_URL, json={
-        'url': PY_URL,
-        'custom_id': request_short_link,
-    })
+    response = client.post(
+        CREATE_SHORT_LINK_URL,
+        json={
+            'url': PY_URL,
+            'custom_id': request_short_link,
+        },
+    )
     assert response.status_code == HTTPStatus.CREATED, (
         f'POST-запрос на создание короткой ссылки к эндпоинту '
         f'`{CREATE_SHORT_LINK_URL}` с корректными данными должен вернуть '
@@ -23,7 +27,7 @@ def test_create_id(client):
     )
     expected_response = {
         'url': PY_URL,
-        'short_link': f'{TEST_BASE_URL}/{request_short_link}'
+        'short_link': f'{TEST_BASE_URL}/{request_short_link}',
     }
     assert response.json.keys() == expected_response.keys(), (
         f'Ответ на валидный POST-запрос к эндпоинту `{CREATE_SHORT_LINK_URL}` '
@@ -37,8 +41,9 @@ def test_create_id(client):
 
 
 def test_create_empty_body(client):
-    response = client.post(CREATE_SHORT_LINK_URL,
-                           content_type='application/json')
+    response = client.post(
+        CREATE_SHORT_LINK_URL, content_type='application/json'
+    )
     assert response.status_code == HTTPStatus.BAD_REQUEST, (
         f'В ответ на пустой POST-запрос к эндпоинту `{CREATE_SHORT_LINK_URL}` '
         f'должен вернуться ответ статус-кодом {HTTPStatus.BAD_REQUEST.value}.'
@@ -59,14 +64,17 @@ def test_create_empty_body(client):
     )
 
 
-@pytest.mark.parametrize('json_data', [
-    ({'url': PY_URL, 'custom_id': '.,/!?'}),
-    ({'url': PY_URL, 'custom_id': 'Hodor-Hodor'}),
-    ({'url': PY_URL, 'custom_id': 'h@k$r'}),
-    ({'url': PY_URL, 'custom_id': '$'}),
-    ({'url': PY_URL, 'custom_id': 'п'}),
-    ({'url': PY_URL, 'custom_id': 'l l'}),
-])
+@pytest.mark.parametrize(
+    'json_data',
+    [
+        ({'url': PY_URL, 'custom_id': '.,/!?'}),
+        ({'url': PY_URL, 'custom_id': 'Hodor-Hodor'}),
+        ({'url': PY_URL, 'custom_id': 'h@k$r'}),
+        ({'url': PY_URL, 'custom_id': '$'}),
+        ({'url': PY_URL, 'custom_id': 'п'}),
+        ({'url': PY_URL, 'custom_id': 'l l'}),
+    ],
+)
 def test_invalid_short_url(json_data, client):
     response = client.post(CREATE_SHORT_LINK_URL, json=json_data)
     assert response.status_code == HTTPStatus.BAD_REQUEST, (
@@ -99,9 +107,12 @@ def test_invalid_short_url(json_data, client):
 
 def test_no_required_field(client):
     try:
-        response = client.post(CREATE_SHORT_LINK_URL, json={
-            'short_link': 'python',
-        })
+        response = client.post(
+            CREATE_SHORT_LINK_URL,
+            json={
+                'short_link': 'python',
+            },
+        )
     except Exception as exc:
         raise AssertionError(
             f'POST-запрос к эндпоинту `{CREATE_SHORT_LINK_URL}` без '
@@ -129,13 +140,17 @@ def test_no_required_field(client):
     )
 
 
-def test_url_already_exists(client, short_python_url,
-                            duplicated_custom_id_msg):
+def test_url_already_exists(
+    client, short_python_url, duplicated_custom_id_msg
+):
     try:
-        response = client.post(CREATE_SHORT_LINK_URL, json={
-            'url': short_python_url.original,
-            'custom_id': short_python_url.short,
-        })
+        response = client.post(
+            CREATE_SHORT_LINK_URL,
+            json={
+                'url': short_python_url.original,
+                'custom_id': short_python_url.short,
+            },
+        )
     except Exception as exc:
         raise AssertionError(
             f'POST-запрос к эндпоинту `{CREATE_SHORT_LINK_URL}` с '
@@ -162,10 +177,13 @@ def test_url_already_exists(client, short_python_url,
     )
 
 
-@pytest.mark.parametrize('json_data', [
-    ({'url': PY_URL}),
-    ({'url': PY_URL, 'custom_id': ''}),
-])
+@pytest.mark.parametrize(
+    'json_data',
+    [
+        ({'url': PY_URL}),
+        ({'url': PY_URL, 'custom_id': ''}),
+    ],
+)
 def test_generated_unique_short_id(json_data, client):
     assert_msg_pattern = (
         f'POST-запрос к эндпоинту `{CREATE_SHORT_LINK_URL}` без указания '
@@ -180,11 +198,11 @@ def test_generated_unique_short_id(json_data, client):
                 f'вызывает исключение: `{type(exc).__name__}: {exc}`.'
             )
         )
-    assert response.status_code == HTTPStatus.CREATED, (
-        assert_msg_pattern.format(
-            'должен вернуться ответ со статус-кодом '
-            f'{HTTPStatus.CREATED.value}.'
-        )
+    assert (
+        response.status_code == HTTPStatus.CREATED
+    ), assert_msg_pattern.format(
+        'должен вернуться ответ со статус-кодом '
+        f'{HTTPStatus.CREATED.value}.'
     )
     unique_id = URLMap.query.filter_by(original=PY_URL).first()
     assert unique_id, (
@@ -241,15 +259,15 @@ def test_get_url_not_found(client):
         f'{HTTPStatus.NOT_FOUND.value}.'
     )
     expected_response = {VALIDATION_ERROR_KEY: 'Указанный id не найден'}
-    assert response.json.keys() == expected_response.keys(), (
-        assert_msg_pattern.format(
-            f'должен содержать ключ `{VALIDATION_ERROR_KEY}`.'
-        )
+    assert (
+        response.json.keys() == expected_response.keys()
+    ), assert_msg_pattern.format(
+        f'должен содержать ключ `{VALIDATION_ERROR_KEY}`.'
     )
-    assert response.json == expected_response, (
-        'Ответ на ' + assert_msg_pattern.format(
-            'не соответствует спецификации.'
-        )
+    assert (
+        response.json == expected_response
+    ), 'Ответ на ' + assert_msg_pattern.format(
+        'не соответствует спецификации.'
     )
 
 
@@ -259,23 +277,26 @@ def test_len_short_id_api(client):
         'содержит значение для поля `custom_id` длиннее 16 символов - '
     )
     long_custom_id = 'f' * 17
-    response = client.post(CREATE_SHORT_LINK_URL, json={
-        'url': PY_URL,
-        'custom_id': long_custom_id,
-    })
-    assert response.status_code == HTTPStatus.BAD_REQUEST, (
-        assert_msg_pattern.format(
-            'должен вернуться ответ со статус-кодом '
-            f'{HTTPStatus.BAD_REQUEST.value}.'
-        )
+    response = client.post(
+        CREATE_SHORT_LINK_URL,
+        json={
+            'url': PY_URL,
+            'custom_id': long_custom_id,
+        },
+    )
+    assert (
+        response.status_code == HTTPStatus.BAD_REQUEST
+    ), assert_msg_pattern.format(
+        'должен вернуться ответ со статус-кодом '
+        f'{HTTPStatus.BAD_REQUEST.value}.'
     )
     expected_response = {
         VALIDATION_ERROR_KEY: 'Указано недопустимое имя для короткой ссылки'
     }
-    assert response.json.keys() == expected_response.keys(), (
-        assert_msg_pattern.format(
-            f'в ответе должен быть ключ `{VALIDATION_ERROR_KEY}`.'
-        )
+    assert (
+        response.json.keys() == expected_response.keys()
+    ), assert_msg_pattern.format(
+        f'в ответе должен быть ключ `{VALIDATION_ERROR_KEY}`.'
     )
     assert response.json == expected_response, (
         f'Ответ на POST-запрос к эндпоинту `{CREATE_SHORT_LINK_URL}` со '
@@ -285,9 +306,12 @@ def test_len_short_id_api(client):
 
 
 def test_len_short_id_autogenerated_api(client):
-    client.post(CREATE_SHORT_LINK_URL, json={
-        'url': PY_URL,
-    })
+    client.post(
+        CREATE_SHORT_LINK_URL,
+        json={
+            'url': PY_URL,
+        },
+    )
     url_map_obj = URLMap.query.filter_by(original=PY_URL).first()
     assert url_map_obj, (
         f'Корректный POST-запрос к эндпоинту `{CREATE_SHORT_LINK_URL}` '
