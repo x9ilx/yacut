@@ -52,8 +52,7 @@ def get_full_url(short):
     APIError
         В случае, если запрос неверен
     """
-    return jsonify(
-        {
-            'url': URLMap.get_full_url_from_short(short)
-        }
-    ), HTTPStatus.OK
+    return (
+        jsonify({'url': URLMap.get_full_url_from_short(short)}),
+        HTTPStatus.OK,
+    )

@@ -43,6 +43,4 @@ def redirect_view(short):
     Response
         Ответ на запрос с перенаправлением
     """
-    return redirect(
-        URLMap.get_full_url_from_short(short)
-    )
+    return redirect(URLMap.get_full_url_from_short(short))

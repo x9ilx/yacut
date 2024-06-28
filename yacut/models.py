@@ -3,13 +3,14 @@ import re
 from datetime import datetime
 from http import HTTPStatus
 
-from flask import abort, url_for
-from .constants import (ALLOWED_SYMBOLS_FOR_SHORT,
-                      NUMBER_OF_SHORT_GENERATION_PASSES, SHORT_LENGTH,
-                      ORIGINAL_LINK_MAX_LENGTH, SHORT_MAX_LENGTH_FOR_USER)
+from flask import url_for
 
 from . import db, text
-from . error_handlers import APIError
+from .constants import (ALLOWED_SYMBOLS_FOR_SHORT,
+                        NUMBER_OF_SHORT_GENERATION_PASSES,
+                        ORIGINAL_LINK_MAX_LENGTH, SHORT_LENGTH,
+                        SHORT_MAX_LENGTH_FOR_USER, SHORT_PATTERN)
+from .error_handlers import APIError
 
 
 class URLMap(db.Model):
@@ -48,8 +49,10 @@ class URLMap(db.Model):
             Экземпляр URLMap созданного объекта
         """
         if short:
-            if (len(short) > SHORT_MAX_LENGTH_FOR_USER
-                or re.match(r'^[a-zA-z0-9]*$', short) is None):
+            if (
+                len(short) > SHORT_MAX_LENGTH_FOR_USER
+                or re.match(SHORT_PATTERN, short) is None
+            ):
                 raise APIError(text.INVALID_SHORT_NAME)
             elif URLMap.query.filter_by(short=short).first() is not None:
                 raise APIError(text.SHORT_ALREADY_EXIST)
@@ -61,10 +64,8 @@ class URLMap(db.Model):
                 if URLMap.query.filter_by(short=short).first() is None:
                     break
             else:
-                raise APIError(
-                    'Не удалось сгенерировать короткую ссылку.'
-                )
-            
+                raise APIError('Не удалось сгенерировать короткую ссылку.')
+
         url_map = URLMap(
             original=original,
             short=short,
