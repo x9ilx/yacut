@@ -16,15 +16,11 @@
             <div>
               <div>
                 {{ form.original_link(class="form-control form-control-lg py-2 mb-3", placeholder=form.original_link.label.text) }}
-                {% if form.original_link.errors %}
-                  <p ><span style="color:red">{% for error in form.original_link.errors %} {{ error }} {% endfor %}</span></p>
-                {% endif %}
+                  {% for error in form.original_link.errors %}<p><span style="color:red"> {{ error }} </span></p>{% endfor %}
               </div>
               <div>
                 {{ form.custom_id(class="form-control form-control-lg py-2 mb-3", placeholder=form.custom_id.label.text) }}
-                {% if form.custom_id.errors %}
-                  <p><span style="color:red">{% for error in form.custom_id.errors %} {{ error }} {% endfor %}</span></p>
-                {% endif %}
+                  {% for error in form.custom_id.errors %}<p><span style="color:red"> {{ error }} </span></p>{% endfor %}
               </div>
               {{ form.submit(class="btn btn-primary") }}
             </div>
@@ -41,21 +37,19 @@
         </div>
         <div class="col-sm">
           {% with messages = get_flashed_messages(category_filter=["error"]) %}
-            {% if messages %}
               {% for message in messages %}
               <p class="text-center text-danger">
                 <h5 class="text-center">{{ message }}</h5>
               </p>
               {% endfor %}
-            {% endif %}
           {% endwith %}
-          {% if url_map %}
+          {% if short %}
             <p class="text-center text-sucess">
               <h5 class="text-center">Ваша новая ссылка готова:</h5>
             </p>
             <p class="text-center">
-              <a href="{{ url_for('redirect_view', short=url_map.short, _external=True) }}" target="_blank">
-                <h5 class="text-center">{{ url_for('redirect_view', short=url_map.short, _external=True) }}</h5>
+              <a href="{{ short }}" target="_blank">
+                <h5 class="text-center">{{ short }}</h5>
               </a>
             </p>
           {% endif %}

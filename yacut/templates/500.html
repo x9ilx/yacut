@@ -1,11 +1,11 @@
 {% extends "base.html" %}
 {% block content_error %}
-	<span id="title"><span>404</span></span>
+	<span id="title"><span>500</span></span>
 	<!-- oh -->
 	<span id="oh">Печалька</span>
 	<!-- txt -->
 	<div class="txt">
-		<p>Искомая страница не найдена :(</p>
+		<p>На нашей стороне проблемы :(</p>
 		<a href="{{ url_for('index_view') }}" class="btn">Вернуться на главную</a>
 	</div>
 {% endblock content_error %}
