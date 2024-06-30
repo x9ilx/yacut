@@ -9,10 +9,10 @@ from .models import URLMap
 
 FORM_REQUIRED_FIELD = 'Это обязательное поле'
 ORIGINAL_EXCEEDING_MAX_LENGTH = (
-    f'Длина не может быть больше ' f'{ORIGINAL_LINK_MAX_LENGTH} символов'
+    f'Длина не может быть больше {ORIGINAL_LINK_MAX_LENGTH} символов'
 )
 SHORT_EXCEEDING_MAX_LENGTH = (
-    f'Длина не может быть больше ' f'{SHORT_MAX_LENGTH_FOR_USER} символов'
+    f'Длина не может быть больше {SHORT_MAX_LENGTH_FOR_USER} символов'
 )
 INVALID_SHORT_NAME = 'Указано недопустимое имя для короткой ссылки'
 SHORT_ALREADY_EXIST = 'Предложенный вариант короткой ссылки уже существует.'
