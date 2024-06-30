@@ -44,7 +44,6 @@ pip install -r requirements.txt
 Инициализировать бд и сделать миграции:
 
 ```bash
-flask db init
 flask db migrate
 ```
 

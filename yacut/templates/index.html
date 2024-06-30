@@ -36,20 +36,20 @@
         <div class="col-sm">
         </div>
         <div class="col-sm">
-          {% with messages = get_flashed_messages(category_filter=["error"]) %}
+          {% with messages = get_flashed_messages() %}
               {% for message in messages %}
               <p class="text-center text-danger">
                 <h5 class="text-center">{{ message }}</h5>
               </p>
               {% endfor %}
           {% endwith %}
-          {% if short %}
+          {% if short_url %}
             <p class="text-center text-sucess">
               <h5 class="text-center">Ваша новая ссылка готова:</h5>
             </p>
             <p class="text-center">
-              <a href="{{ short }}" target="_blank">
-                <h5 class="text-center">{{ short }}</h5>
+              <a href="{{ short_url }}" target="_blank">
+                <h5 class="text-center">{{ short_url }}</h5>
               </a>
             </p>
           {% endif %}

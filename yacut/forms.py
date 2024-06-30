@@ -3,41 +3,50 @@ from wtforms import SubmitField, URLField
 from wtforms.validators import (DataRequired, Length, Optional, Regexp,
                                 ValidationError)
 
-from . import text
-from .constants import ORIGINAL_LINK_MAX_LENGTH, SHORT_MAX_LENGTH_FOR_USER
+from .constants import (ORIGINAL_LINK_MAX_LENGTH, SHORT_MAX_LENGTH_FOR_USER,
+                        SHORT_PATTERN)
 from .models import URLMap
+
+FORM_REQUIRED_FIELD = 'Это обязательное поле'
+ORIGINAL_EXCEEDING_MAX_LENGTH = (
+    f'Длина не может быть больше ' f'{ORIGINAL_LINK_MAX_LENGTH} символов'
+)
+SHORT_EXCEEDING_MAX_LENGTH = (
+    f'Длина не может быть больше ' f'{SHORT_MAX_LENGTH_FOR_USER} символов'
+)
+INVALID_SHORT_NAME = 'Указано недопустимое имя для короткой ссылки'
+SHORT_ALREADY_EXIST = 'Предложенный вариант короткой ссылки уже существует.'
+ORIGINAL_FIELD_NAME = 'Длинная ссылка'
+SHORT_FIELD_NAME = 'Ваш вариант короткой ссылки'
+SUBMIT_BUTTON_TEXT = 'Создать'
 
 
 class URLMapForm(FlaskForm):
     """URLMapForm описания формы для html-шаблона."""
 
     original_link = URLField(
-        text.ORIGINAL_FIELD_NAME,
+        ORIGINAL_FIELD_NAME,
         validators=[
-            DataRequired(text.FORM_REQUIRED_FIELD),
+            DataRequired(FORM_REQUIRED_FIELD),
             Length(
                 max=ORIGINAL_LINK_MAX_LENGTH,
-                message=text.EXCEEDING_MAX_LENGTH.format(
-                    length=ORIGINAL_LINK_MAX_LENGTH
-                ),
+                message=ORIGINAL_EXCEEDING_MAX_LENGTH,
             ),
         ],
     )
     custom_id = URLField(
-        text.SHORT_FIELD_NAME,
+        SHORT_FIELD_NAME,
         validators=[
             Length(
                 max=SHORT_MAX_LENGTH_FOR_USER,
-                message=text.EXCEEDING_MAX_LENGTH.format(
-                    length=SHORT_MAX_LENGTH_FOR_USER
-                ),
+                message=SHORT_EXCEEDING_MAX_LENGTH,
             ),
-            Regexp(regex=r'^[a-zA-z0-9]*$', message=text.INVALID_SHORT_NAME),
+            Regexp(regex=SHORT_PATTERN, message=INVALID_SHORT_NAME),
             Optional(),
         ],
     )
-    submit = SubmitField(text.SUBMIT_BUTTON_TEXT)
+    submit = SubmitField(SUBMIT_BUTTON_TEXT)
 
     def validate_custom_id(form, field):
-        if URLMap.query.filter_by(short=field.data).first() is not None:
-            raise ValidationError(text.SHORT_ALREADY_EXIST)
+        if URLMap.check_short_id_exist(field.data):
+            raise ValidationError(SHORT_ALREADY_EXIST)
