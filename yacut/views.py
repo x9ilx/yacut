@@ -53,4 +53,4 @@ def redirect_view(short):
     try:
         return redirect(URLMap.get_full_url_from_short(short))
     except ModelError as error:
-            abort(error.error_type.value)
+        abort(error.error_type.value)
