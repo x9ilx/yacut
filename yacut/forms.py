@@ -48,5 +48,5 @@ class URLMapForm(FlaskForm):
     submit = SubmitField(SUBMIT_BUTTON_TEXT)
 
     def validate_custom_id(form, field):
-        if URLMap.check_short_id_exist(field.data):
+        if URLMap.get_url_map_from_short(field.data):
             raise ValidationError(SHORT_ALREADY_EXIST)

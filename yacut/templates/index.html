@@ -38,8 +38,8 @@
         <div class="col-sm">
           {% with messages = get_flashed_messages() %}
               {% for message in messages %}
-              <p class="text-center text-danger">
-                <h5 class="text-center">{{ message }}</h5>
+              <p class="text-center">
+                <h5 class="text-center text-danger">{{ message }}</h5>
               </p>
               {% endfor %}
           {% endwith %}

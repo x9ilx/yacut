@@ -1,7 +1,9 @@
+from http import HTTPStatus
+
 from flask import abort, flash, redirect, render_template
 
 from . import app
-from .error_handlers import ModelError, ModelErrorType
+from .error_handlers import ModelError
 from .forms import URLMapForm
 from .models import URLMap
 
@@ -19,18 +21,19 @@ def index_view():
     if not form.validate_on_submit():
         return render_template('index.html', form=form)
     try:
-        url_map = URLMap.create(
-            original=form.original_link.data,
-            short=form.custom_id.data,
+        return render_template(
+            'index.html',
+            form=form,
+            short_url=URLMap.create(
+                original=form.original_link.data,
+                short=form.custom_id.data,
+            ).short_url,
         )
     except ModelError as error:
-        if error.error_type == ModelErrorType.DB:
-            abort(error.error_type.value)
         flash(error.message)
     return render_template(
         'index.html',
         form=form,
-        short_url=url_map.short_url,
     )
 
 
@@ -52,5 +55,5 @@ def redirect_view(short):
     """
     try:
         return redirect(URLMap.get_full_url_from_short(short))
-    except ModelError as error:
-        abort(error.error_type.value)
+    except ModelError:
+        abort(HTTPStatus.NOT_FOUND)

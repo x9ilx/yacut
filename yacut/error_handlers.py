@@ -1,4 +1,3 @@
-import enum
 from http import HTTPStatus
 
 from flask import jsonify, render_template
@@ -6,24 +5,14 @@ from flask import jsonify, render_template
 from . import app, db
 
 
-class ModelErrorType(enum.Enum):
-    DB = 500
-    NOT_FOUND = 404
-    WRONG_DATA = 400
-
-
 class ModelError(Exception):
     """
     ModelError Класс исключения для неверного взаимодействия с моделями.
     """
 
-    error_type = ModelErrorType.WRONG_DATA
-
-    def __init__(self, message, error_type=None, *args):
+    def __init__(self, message, *args):
         super().__init__(*args)
         self.message = message
-        if error_type is not None:
-            self.error_type = error_type
 
 
 class APIError(Exception):
