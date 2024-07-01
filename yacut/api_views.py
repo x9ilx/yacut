@@ -36,13 +36,13 @@ def create_url_map():
                 URLMap.create(
                     original=data['url'],
                     short=data.get('custom_id'),
-                    validate_short=True,
+                    validate_data=True,
                 ).to_dict()
             ),
             HTTPStatus.CREATED,
         )
     except ModelError as error:
-        raise APIError(error.message)
+        raise APIError(str(error))
 
 
 @app.route('/api/id/<string:short>/', methods=['GET'])
@@ -71,4 +71,4 @@ def get_full_url(short):
             HTTPStatus.OK,
         )
     except ModelError as error:
-        raise APIError(error.message, status_code=HTTPStatus.NOT_FOUND)
+        raise APIError(str(error), status_code=HTTPStatus.NOT_FOUND)

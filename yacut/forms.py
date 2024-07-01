@@ -16,16 +16,19 @@ SHORT_EXCEEDING_MAX_LENGTH = (
 )
 INVALID_SHORT_NAME = 'Указано недопустимое имя для короткой ссылки'
 SHORT_ALREADY_EXIST = 'Предложенный вариант короткой ссылки уже существует.'
-ORIGINAL_FIELD_NAME = 'Длинная ссылка'
-SHORT_FIELD_NAME = 'Ваш вариант короткой ссылки'
+ORIGINAL_FIELD_LABEL = 'Длинная ссылка'
+SHORT_FIELD_LABEL = 'Ваш вариант короткой ссылки'
+ORIGINAL_FIELD_NAME = 'original_link'
+SHORT_FIELD_NAME = 'custom_id'
 SUBMIT_BUTTON_TEXT = 'Создать'
 
 
 class URLMapForm(FlaskForm):
     """URLMapForm описания формы для html-шаблона."""
 
-    original_link = URLField(
-        ORIGINAL_FIELD_NAME,
+    original = URLField(
+        label=ORIGINAL_FIELD_LABEL,
+        name=ORIGINAL_FIELD_NAME,
         validators=[
             DataRequired(FORM_REQUIRED_FIELD),
             Length(
@@ -34,8 +37,9 @@ class URLMapForm(FlaskForm):
             ),
         ],
     )
-    custom_id = URLField(
-        SHORT_FIELD_NAME,
+    short = URLField(
+        label=SHORT_FIELD_LABEL,
+        name=SHORT_FIELD_NAME,
         validators=[
             Length(
                 max=SHORT_MAX_LENGTH_FOR_USER,
@@ -47,6 +51,6 @@ class URLMapForm(FlaskForm):
     )
     submit = SubmitField(SUBMIT_BUTTON_TEXT)
 
-    def validate_custom_id(form, field):
-        if URLMap.get_url_map_from_short(field.data):
+    def validate_short(form, field):
+        if URLMap.get(field.data):
             raise ValidationError(SHORT_ALREADY_EXIST)

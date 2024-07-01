@@ -14,7 +14,10 @@ from .error_handlers import ModelError
 ID_NOT_EXIST = 'Указанный id не найден'
 INVALID_SHORT_NAME = 'Указано недопустимое имя для короткой ссылки'
 SHORT_ALREADY_EXIST = 'Предложенный вариант короткой ссылки уже существует.'
-GENERATE_SHORT_ERROR = 'Не удалось сгенерировать короткую ссылку.'
+GENERATE_SHORT_ERROR = (
+    f'Не удалось сгенерировать короткую ссылку за '
+    f'{NUMBER_OF_SHORT_GENERATION_PASSES} попыток'
+)
 INVALID_ORIGINAL_LENGTH = (
     f'URL должен быть указан и его длина не может '
     f'превышать {ORIGINAL_LINK_MAX_LENGTH} символов'
@@ -32,22 +35,22 @@ class URLMap(db.Model):
     def to_dict(self):
         return {
             'url': self.original,
-            'short_link': self.short_url,
+            'short_link': self.short_link,
         }
 
     @property
-    def short_url(self):
+    def short_link(self):
         return url_for(REDIRECT_VIEW_NAME, short=self.short, _external=True)
 
     @staticmethod
     def get_full_url_from_short(short):
-        url_map = URLMap.get_url_map_from_short(short=short)
+        url_map = URLMap.get(short=short)
         if url_map is None:
             raise ModelError(ID_NOT_EXIST)
         return url_map.original
 
     @staticmethod
-    def create(original, short=None, validate_short=False):
+    def create(original, short=None, validate_data=False):
         """
         Создаёт запись в БД.
 
@@ -57,30 +60,31 @@ class URLMap(db.Model):
             Экземпляр URLMap созданного объекта
         """
         if short:
-            if validate_short:
+            if validate_data:
                 if (
                     len(short) > SHORT_MAX_LENGTH_FOR_USER
                     or re.match(SHORT_PATTERN, short) is None
                 ):
                     raise ModelError(INVALID_SHORT_NAME)
-                elif URLMap.get_url_map_from_short(short):
+                elif URLMap.get(short):
                     raise ModelError(SHORT_ALREADY_EXIST)
         else:
-            short = URLMap.generate_short_id()
-        if validate_short and len(original) > ORIGINAL_LINK_MAX_LENGTH:
+            short = URLMap.generate_short()
+        if validate_data and len(original) > ORIGINAL_LINK_MAX_LENGTH:
             raise ModelError(INVALID_ORIGINAL_LENGTH)
         url_map = URLMap(
             original=original,
             short=short,
-        )   # type: ignore
+        )
         db.session.add(url_map)
         db.session.commit()
         return url_map
 
     @staticmethod
-    def get_url_map_from_short(short):
+    def get(short):
         """
         Получает объект URLMap по короткому ID.
+
         Parameters
         ----------
         short : str
@@ -93,7 +97,7 @@ class URLMap(db.Model):
         return URLMap.query.filter_by(short=short).first()
 
     @staticmethod
-    def generate_short_id():
+    def generate_short():
         """
         Генерирует уникальный короткий ID.
         Returns
@@ -105,7 +109,6 @@ class URLMap(db.Model):
             short = ''.join(
                 random.sample(ALLOWED_SYMBOLS_FOR_SHORT, SHORT_LENGTH)
             )
-            if not URLMap.get_url_map_from_short(short):
+            if not URLMap.get(short):
                 return short
-
         raise ModelError(GENERATE_SHORT_ERROR)

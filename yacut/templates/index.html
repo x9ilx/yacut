@@ -15,12 +15,12 @@
             {{ form.csrf_token }}
             <div>
               <div>
-                {{ form.original_link(class="form-control form-control-lg py-2 mb-3", placeholder=form.original_link.label.text) }}
-                  {% for error in form.original_link.errors %}<p><span style="color:red"> {{ error }} </span></p>{% endfor %}
+                {{ form.original(class="form-control form-control-lg py-2 mb-3", placeholder=form.original.label.text) }}
+                  {% for error in form.original.errors %}<p><span style="color:red"> {{ error }} </span></p>{% endfor %}
               </div>
               <div>
-                {{ form.custom_id(class="form-control form-control-lg py-2 mb-3", placeholder=form.custom_id.label.text) }}
-                  {% for error in form.custom_id.errors %}<p><span style="color:red"> {{ error }} </span></p>{% endfor %}
+                {{ form.short(class="form-control form-control-lg py-2 mb-3", placeholder=form.short.label.text) }}
+                  {% for error in form.short.errors %}<p><span style="color:red"> {{ error }} </span></p>{% endfor %}
               </div>
               {{ form.submit(class="btn btn-primary") }}
             </div>
@@ -43,13 +43,13 @@
               </p>
               {% endfor %}
           {% endwith %}
-          {% if short_url %}
+          {% if short_link %}
             <p class="text-center text-sucess">
               <h5 class="text-center">Ваша новая ссылка готова:</h5>
             </p>
             <p class="text-center">
-              <a href="{{ short_url }}" target="_blank">
-                <h5 class="text-center">{{ short_url }}</h5>
+              <a href="{{ short_link }}" target="_blank">
+                <h5 class="text-center">{{ short_link }}</h5>
               </a>
             </p>
           {% endif %}

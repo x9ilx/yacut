@@ -7,17 +7,13 @@ from . import app, db
 
 class ModelError(Exception):
     """
-    ModelError Класс исключения для неверного взаимодействия с моделями.
+    Класс исключении, для ошибок в моделях.
     """
-
-    def __init__(self, message, *args):
-        super().__init__(*args)
-        self.message = message
 
 
 class APIError(Exception):
     """
-    APIError Класс исключения для неверного взаимодействия с API.
+    Класс исключении, для ошибок в API.
     """
 
     status_code = HTTPStatus.BAD_REQUEST

@@ -24,13 +24,13 @@ def index_view():
         return render_template(
             'index.html',
             form=form,
-            short_url=URLMap.create(
-                original=form.original_link.data,
-                short=form.custom_id.data,
-            ).short_url,
+            short_link=URLMap.create(
+                original=form.original.data,
+                short=form.short.data,
+            ).short_link,
         )
     except ModelError as error:
-        flash(error.message)
+        flash(str(error))
     return render_template(
         'index.html',
         form=form,
